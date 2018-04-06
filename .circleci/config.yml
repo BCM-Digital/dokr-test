@@ -24,7 +24,7 @@ jobs:
   test:
     working_directory: ~/repo
     docker:
-      - image: tristanpixls/enzyme-test:php-laravel-phpunit
+      - image: tristanpixls/enzyme-test:circleci-php-laravel-phpunit
     steps:
       - attach_workspace:
           at: .
