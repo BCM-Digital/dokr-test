@@ -29,7 +29,34 @@ jobs:
       - attach_workspace:
           at: .
       - run: phpunit
-  build:
+  build_framework:
+    working_directory: ~/repo
+    docker:
+      - image: tristanpixls/enzyme-build:php-laravel
+    steps:
+      - attach_workspace:
+          at: .
+      - run: php artisan config:cache
+      - run: php artisan route:cache
+      - run: php artisan view:cache
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - ./bootstrap/*
+            - ./storage/*
+  build_static:
+    working_directory: ~/repo
+    docker:
+      - image: kkarczmarczyk/node-yarn:8.0
+    steps:
+      - attach_workspace:
+          at: .
+      - run: yarn --production
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - ./public/*
+  package:
     working_directory: ~/repo
     machine: true
     steps:
@@ -51,9 +78,16 @@ workflows:
       - test:
           requires:
             - checkout_and_setup
-      - build:
+      - build_framework:
           requires:
             - test
+      - build_static:
+          requires:
+            - test
+      - package:
+          requires:
+            - build_framework
+            - build_static
       - approve_before_prod_deploy:
           type: approval
           requires:
