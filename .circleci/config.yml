@@ -11,8 +11,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "composer.json" }}
-          - v1-dependencies-
+            - v1-dependencies-{{ checksum "composer.json" }}
+            - v1-dependencies-
       - run: composer install -n --prefer-dist
       - run: cp .env.example .env
       - run: php artisan key:generate
@@ -21,7 +21,7 @@ jobs:
             - ./vendor
           key: v1-dependencies-{{ checksum "composer.json" }}
       - persist_to_workspace:
-          root: ~
+          root: ~/
           paths:
             - repo
   test:
@@ -37,14 +37,14 @@ jobs:
     machine: true
     steps:
       - attach_workspace:
-          at: ~/repo
+        at: ~/repo
       - run: docker-compose build
   deploy:
     <<: *defaults
     machine: true
     steps:
       - attach_workspace:
-          at: ~/repo
+        at: ~/repo
 
 workflows:
   version: 2
