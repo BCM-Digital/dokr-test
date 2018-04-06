@@ -18,16 +18,16 @@ jobs:
             - ./vendor
           key: v1-dependencies-{{ checksum "composer.json" }}
       - persist_to_workspace:
-          root: ~/
+          root: ~/repo
           paths:
-            - repo
+            - .
   test:
     working_directory: ~/repo
     docker:
       - image: unitedclassifiedsapps/php7-node-composer:7.2-02
     steps:
       - attach_workspace:
-          at: ~
+          at: .
       - run: pwd
       - run: ls -la
       - run: phpunit
@@ -36,14 +36,14 @@ jobs:
     machine: true
     steps:
       - attach_workspace:
-          at: ~
+          at: .
       - run: docker-compose build
   deploy:
     working_directory: ~/repo
     machine: true
     steps:
       - attach_workspace:
-          at: ~
+          at: .
 
 workflows:
   version: 2
