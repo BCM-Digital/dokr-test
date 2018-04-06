@@ -24,7 +24,7 @@ jobs:
   test:
     working_directory: ~/repo
     docker:
-      - image: unitedclassifiedsapps/php7-node-composer:7.2-02
+      - image: tristanpixls/enzyme-test
     steps:
       - attach_workspace:
           at: .
