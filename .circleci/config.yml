@@ -29,6 +29,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: pwd
+      - run: ls -la
       - run: phpunit
   build:
     working_directory: ~/repo
