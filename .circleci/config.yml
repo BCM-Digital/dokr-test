@@ -91,7 +91,7 @@ workflows:
       - approve_before_prod_deploy:
           type: approval
           requires:
-            - build
+            - package
       - deploy:
           requires:
             - approve_before_prod_deploy
