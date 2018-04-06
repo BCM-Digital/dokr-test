@@ -3,20 +3,20 @@ jobs:
   checkout_and_setup:
     working_directory: ~/repo
     docker:
-      - image: unitedclassifiedsapps/php7-node-composer:7.2-02
+      - image: tristanpixls/enzyme-build:php-laravel
     steps:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "composer.json" }}
-            - v1-dependencies-
-      - run: composer install -n --prefer-dist
+            - composer-packages-{{ checksum "composer.json" }}
+            - composer-packages-
+      - run: composer install
       - run: cp .env.example .env
       - run: php artisan key:generate
       - save_cache:
           paths:
             - ./vendor
-          key: v1-dependencies-{{ checksum "composer.json" }}
+          key: composer-packages-{{ checksum "composer.json" }}
       - persist_to_workspace:
           root: ~/repo
           paths:
@@ -24,7 +24,7 @@ jobs:
   test:
     working_directory: ~/repo
     docker:
-      - image: tristanpixls/enzyme-test:circleci-php-laravel-phpunit
+      - image: tristanpixls/enzyme-test:php-laravel
     steps:
       - attach_workspace:
           at: .
