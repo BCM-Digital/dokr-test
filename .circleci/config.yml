@@ -27,21 +27,21 @@ jobs:
       - image: unitedclassifiedsapps/php7-node-composer:7.2-02
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: .
       - run: phpunit
   build:
     working_directory: ~/repo
     machine: true
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: .
       - run: docker-compose build
   deploy:
     working_directory: ~/repo
     machine: true
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: .
 
 workflows:
   version: 2
