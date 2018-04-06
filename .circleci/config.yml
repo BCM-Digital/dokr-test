@@ -1,10 +1,7 @@
-defaults: &defaults
-  working_directory: ~/repo
-
 version: 2
 jobs:
   checkout_and_setup:
-    <<: *defaults
+    working_directory: ~/repo
     docker:
       - image: unitedclassifiedsapps/php7-node-composer:7.2-02
     steps:
@@ -25,7 +22,7 @@ jobs:
         paths:
           - repo
   test:
-    <<: *defaults
+    working_directory: ~/repo
     docker:
       - image: unitedclassifiedsapps/php7-node-composer:7.2-02
     steps:
@@ -33,14 +30,14 @@ jobs:
         at: ~/repo
       - run: phpunit
   build:
-    <<: *defaults
+    working_directory: ~/repo
     machine: true
     steps:
       - attach_workspace:
         at: ~/repo
       - run: docker-compose build
   deploy:
-    <<: *defaults
+    working_directory: ~/repo
     machine: true
     steps:
       - attach_workspace:
