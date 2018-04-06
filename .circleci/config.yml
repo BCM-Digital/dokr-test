@@ -1,9 +1,12 @@
+defaults: &defaults
+  working_directory: ~/repo
+
 version: 2
 jobs:
-  test:
+  checkout_and_setup:
+    <<: *defaults
     docker:
       - image: unitedclassifiedsapps/php7-node-composer:7.2-02
-    working_directory: ~/repo
     steps:
       - checkout
       - restore_cache:
@@ -17,24 +20,40 @@ jobs:
           paths:
             - ./vendor
           key: v1-dependencies-{{ checksum "composer.json" }}
+      - persist_to_workspace:
+          root: ~
+          paths:
+            - repo
+  test:
+    <<: *defaults
+    docker:
+      - image: unitedclassifiedsapps/php7-node-composer:7.2-02
+    steps:
+      - attach_workspace:
+          at: ~/repo
       - run: phpunit
   build:
+    <<: *defaults
     machine: true
-    working_directory: ~/repo
     steps:
-      - checkout
+      - attach_workspace:
+          at: ~/repo
       - run: docker-compose build
   deploy:
+    <<: *defaults
     machine: true
-    working_directory: ~/repo
     steps:
-      - checkout
+      - attach_workspace:
+          at: ~/repo
 
 workflows:
   version: 2
   continous-deployment:
     jobs:
-      - test
+      - checkout_and_setup
+      - test:
+        requires:
+          - checkout_and_setup
       - build:
           requires:
             - test
