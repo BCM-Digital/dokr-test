@@ -24,6 +24,11 @@ jobs:
     steps:
       - checkout
       - run: docker-compose build
+  deploy:
+    machine: true
+    working_directory: ~/repo
+    steps:
+      - checkout
 
 workflows:
   version: 2
@@ -33,3 +38,10 @@ workflows:
       - build:
           requires:
             - test
+      - approve_before_prod_deploy:
+          type: approval
+          requires:
+            - build
+      - deploy:
+          requires:
+            - approve_before_prod_deploy
