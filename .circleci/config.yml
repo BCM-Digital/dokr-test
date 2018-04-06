@@ -10,27 +10,27 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "composer.json" }}
-            - v1-dependencies-
+        keys:
+          - v1-dependencies-{{ checksum "composer.json" }}
+          - v1-dependencies-
       - run: composer install -n --prefer-dist
       - run: cp .env.example .env
       - run: php artisan key:generate
       - save_cache:
-          paths:
-            - ./vendor
-          key: v1-dependencies-{{ checksum "composer.json" }}
+        paths:
+          - ./vendor
+        key: v1-dependencies-{{ checksum "composer.json" }}
       - persist_to_workspace:
-          root: ~/
-          paths:
-            - repo
+        root: ~/
+        paths:
+          - repo
   test:
     <<: *defaults
     docker:
       - image: unitedclassifiedsapps/php7-node-composer:7.2-02
     steps:
       - attach_workspace:
-          at: ~/repo
+        at: ~/repo
       - run: phpunit
   build:
     <<: *defaults
@@ -55,12 +55,12 @@ workflows:
         requires:
           - checkout_and_setup
       - build:
-          requires:
-            - test
+        requires:
+          - test
       - approve_before_prod_deploy:
-          type: approval
-          requires:
-            - build
+        type: approval
+        requires:
+          - build
       - deploy:
-          requires:
-            - approve_before_prod_deploy
+        requires:
+          - approve_before_prod_deploy
