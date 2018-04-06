@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  test:
     docker:
       - image: unitedclassifiedsapps/php7-node-composer:7.2-02
     working_directory: ~/repo
@@ -18,9 +18,18 @@ jobs:
             - ./vendor
           key: v1-dependencies-{{ checksum "composer.json" }}
       - run: phpunit
+  build:
+    machine: true
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run: docker-compose build
 
 workflows:
   version: 2
   continous-deployment:
     jobs:
-      - build
+      - test
+      - build:
+        requires:
+          - test
