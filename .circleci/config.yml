@@ -47,13 +47,16 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run: docker build -t tristanpixls/dokr:${CIRCLE_SHA1} .
+      - run: docker build -t test/dokr .
   deploy:
     working_directory: ~/repo
     machine: true
     steps:
       - attach_workspace:
           at: .
+      - run: $(aws ecr get-login --no-include-email --region ap-southeast-2)
+      - run: docker tag test/dokr:latest 602942109470.dkr.ecr.ap-southeast-2.amazonaws.com/test/dokr:${CIRCLE_SHA1}
+      - run: docker push 602942109470.dkr.ecr.ap-southeast-2.amazonaws.com/test/dokr:${CIRCLE_SHA1}
 
 workflows:
   version: 2
