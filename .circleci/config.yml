@@ -68,7 +68,6 @@ workflows:
             - test
       - package:
           requires:
-            - build_framework
             - build_static
       - deploy:
           requires:
