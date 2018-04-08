@@ -41,19 +41,13 @@ jobs:
           root: ~/repo
           paths:
             - ./public/*
-  package:
+  package_and_deploy:
     working_directory: ~/repo
     machine: true
     steps:
       - attach_workspace:
           at: .
       - run: docker build -t test/dokr .
-  deploy:
-    working_directory: ~/repo
-    machine: true
-    steps:
-      - attach_workspace:
-          at: .
       - run: $(aws ecr get-login --no-include-email --region ap-southeast-2)
       - run: docker tag test/dokr:latest 602942109470.dkr.ecr.ap-southeast-2.amazonaws.com/test/dokr:${CIRCLE_SHA1}
       - run: docker push 602942109470.dkr.ecr.ap-southeast-2.amazonaws.com/test/dokr:${CIRCLE_SHA1}
@@ -69,9 +63,6 @@ workflows:
       - build_static:
           requires:
             - test
-      - package:
+      - package_and_deploy:
           requires:
             - build_static
-      - deploy:
-          requires:
-            - package
